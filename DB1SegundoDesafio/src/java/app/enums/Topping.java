@@ -1,0 +1,6 @@
+package app.enums;
+
+public enum Topping {
+    HAM,BEEF,CHICKEN,PEPPERONI,WHITECHEESE,
+    ONION,OLIVE,TOMATO,MOZZARELLA,MUSHROOM
+}
