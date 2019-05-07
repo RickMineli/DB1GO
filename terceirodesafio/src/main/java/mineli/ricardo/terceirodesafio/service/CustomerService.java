@@ -14,16 +14,24 @@ public class CustomerService {
     @Autowired
     private CustomerRepository customerRepository;
 
-    public Customer createCustomer(String name, String phoneNumber, String email ){
+    public Customer createCustomer(String name, String phoneNumber, String email) {
         return customerRepository.save(new Customer(name, phoneNumber, email));
     }
 
-    public Customer findById(Long id){
+    public Customer findById(Long id) {
         Optional<Customer> obj = customerRepository.findById(id);
         return obj.orElse(null);
     }
 
-    public List<Customer> findAll(){
+    public List<Customer> findAll() {
         return customerRepository.findAll();
+    }
+
+    public void delete(Long id) {
+        customerRepository.deleteById(id);
+    }
+
+    public Customer update(Customer customer) {
+        return customerRepository.save(customer);
     }
 }
