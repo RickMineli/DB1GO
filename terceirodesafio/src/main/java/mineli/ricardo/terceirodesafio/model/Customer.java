@@ -65,15 +65,12 @@ public class Customer {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Customer customer = (Customer) o;
-        return id.equals(customer.id) &&
-                name.equals(customer.name) &&
-                phoneNumber.equals(customer.phoneNumber) &&
-                email.equals(customer.email);
+        Order order = (Order) o;
+        return getId().equals(order.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(getId());
     }
 }

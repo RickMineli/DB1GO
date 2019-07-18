@@ -1,8 +1,11 @@
 package mineli.ricardo.terceirodesafio.controller;
 
 import mineli.ricardo.terceirodesafio.dto.CustomerDTO;
+import mineli.ricardo.terceirodesafio.dto.OrderDTO;
 import mineli.ricardo.terceirodesafio.model.Customer;
+import mineli.ricardo.terceirodesafio.model.Order;
 import mineli.ricardo.terceirodesafio.service.CustomerService;
+import mineli.ricardo.terceirodesafio.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 
 @CrossOrigin("*")
 @RestController
@@ -18,6 +22,9 @@ public class CustomerController {
 
     @Autowired
     private CustomerService service;
+
+    @Autowired
+    private OrderService serviceOrder;
 
     @RequestMapping("/{id}")
     private ResponseEntity<Customer> findById(@PathVariable Long id){
@@ -30,10 +37,26 @@ public class CustomerController {
         return ResponseEntity.ok().body(service.findAll());
     }
 
+    @GetMapping("/{customerId}/orders")
+    private ResponseEntity<?> findCostumerOrders(@PathVariable Long customerId){
+        List<Order> orders = service.findCostumerOrders(customerId);
+        return ResponseEntity.ok().body(orders);
+    }
+
     @PostMapping
     private ResponseEntity<Void> insert(@RequestBody CustomerDTO objDTO){
         Customer obj = new Customer(objDTO.getName(),objDTO.getPhoneNumber(),objDTO.getEmail());
         service.save(obj);
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}").buildAndExpand(obj.getId()).toUri();
+        return ResponseEntity.created(uri).build();
+    }
+
+    @PostMapping("/{customerId}/orders")
+    private ResponseEntity<Void> insertOrder(@RequestBody OrderDTO objDTO, @PathVariable Long customerId){
+        Order obj = new Order(objDTO.getAdress(), objDTO.getPickup(), service.findById(customerId));
+        serviceOrder.save(obj);
+
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}").buildAndExpand(obj.getId()).toUri();
         return ResponseEntity.created(uri).build();
