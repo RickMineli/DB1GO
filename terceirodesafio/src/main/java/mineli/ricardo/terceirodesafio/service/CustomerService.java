@@ -7,10 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,9 +20,6 @@ public class CustomerService {
 
     @Autowired
     private CustomerRepository repository;
-
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
 
     public Customer save(Customer obj) {
         return repository.save(obj);
@@ -52,16 +47,4 @@ public class CustomerService {
         return repository.findAll(pageRequest);
     }
 
-    public List<Order> findCostumerOrders(Long costumerId) {
-        String sql = "SELECT  PIZZA_ORDER.* FROM CUSTOMER INNER JOIN PIZZA_ORDER ON CUSTOMER.ID=PIZZA_ORDER.CUSTOMER_ID WHERE PIZZA_ORDER.CUSTOMER_ID=" + costumerId;
-        List<Order> orders = new ArrayList<>();
-
-        List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
-        for (Map row : rows) {
-            Order order = new Order((String)row.get("ADDRESS"),(boolean)row.get("PICKUP"),repository.findById((Long)row.get("CUSTOMER_ID")).get());
-            order.setId((Long)(row.get("ID")));
-            orders.add(order);
-        }
-        return orders;
-    }
 }

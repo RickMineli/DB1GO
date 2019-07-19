@@ -1,13 +1,5 @@
 package mineli.ricardo.terceirodesafio.dto;
 
-import mineli.ricardo.terceirodesafio.model.Customer;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-
-import javax.persistence.*;
-import java.time.LocalDateTime;
-import java.util.Objects;
-
 public class OrderDTO {
 
     private String adress;

@@ -1,16 +1,23 @@
 package mineli.ricardo.terceirodesafio.controller;
 
 
-import mineli.ricardo.terceirodesafio.dto.OrderDTO;
+import mineli.ricardo.terceirodesafio.dto.PizzaDTO;
 import mineli.ricardo.terceirodesafio.model.Order;
+import mineli.ricardo.terceirodesafio.model.Pizza;
+import mineli.ricardo.terceirodesafio.service.CustomerService;
 import mineli.ricardo.terceirodesafio.service.OrderService;
+import mineli.ricardo.terceirodesafio.service.PizzaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 
 @CrossOrigin("*")
@@ -21,6 +28,10 @@ public class OrderController {
     @Autowired
     private OrderService service;
 
+    @Autowired
+    private PizzaService pizzaService;
+
+
     @RequestMapping("/{id}")
     private ResponseEntity<Order> findById(@PathVariable Long id){
         Order obj = service.findById(id);
@@ -30,6 +41,22 @@ public class OrderController {
     @RequestMapping
     private ResponseEntity<?> findAll(){
         return ResponseEntity.ok().body(service.findAll());
+    }
+
+
+    @GetMapping("/{orderId}/pizzas")
+    private ResponseEntity<?> findOrderPizzas(@PathVariable Long orderId){
+        List<Pizza> pizzas = pizzaService.findOrderPizzas(orderId);
+        return ResponseEntity.ok().body(pizzas);
+    }
+
+    @PostMapping("/{orderId}/pizzas")
+    private ResponseEntity<Void> insertPizza(@RequestBody PizzaDTO objDTO, @PathVariable Long orderId){
+        Pizza obj = new Pizza(objDTO.getTopping(), service.findById(orderId));
+        pizzaService.save(obj);
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}").buildAndExpand(obj.getId()).toUri();
+        return ResponseEntity.created(uri).build();
     }
 
     @DeleteMapping("/{id}")

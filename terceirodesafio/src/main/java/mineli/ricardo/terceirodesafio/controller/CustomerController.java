@@ -4,6 +4,7 @@ import mineli.ricardo.terceirodesafio.dto.CustomerDTO;
 import mineli.ricardo.terceirodesafio.dto.OrderDTO;
 import mineli.ricardo.terceirodesafio.model.Customer;
 import mineli.ricardo.terceirodesafio.model.Order;
+import mineli.ricardo.terceirodesafio.model.Pizza;
 import mineli.ricardo.terceirodesafio.service.CustomerService;
 import mineli.ricardo.terceirodesafio.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,7 @@ public class CustomerController {
     private CustomerService service;
 
     @Autowired
-    private OrderService serviceOrder;
+    private OrderService orderService;
 
     @RequestMapping("/{id}")
     private ResponseEntity<Customer> findById(@PathVariable Long id){
@@ -39,7 +40,7 @@ public class CustomerController {
 
     @GetMapping("/{customerId}/orders")
     private ResponseEntity<?> findCostumerOrders(@PathVariable Long customerId){
-        List<Order> orders = service.findCostumerOrders(customerId);
+        List<Order> orders = orderService.findCostumerOrders(customerId);
         return ResponseEntity.ok().body(orders);
     }
 
@@ -55,12 +56,20 @@ public class CustomerController {
     @PostMapping("/{customerId}/orders")
     private ResponseEntity<Void> insertOrder(@RequestBody OrderDTO objDTO, @PathVariable Long customerId){
         Order obj = new Order(objDTO.getAdress(), objDTO.getPickup(), service.findById(customerId));
-        serviceOrder.save(obj);
-
+        orderService.save(obj);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}").buildAndExpand(obj.getId()).toUri();
         return ResponseEntity.created(uri).build();
     }
+
+//    @PostMapping("/{customerId}/orders/{orderId}/pizzas")
+//    private ResponseEntity<Void> insertPizzaInOrder(@RequestBody PizzaDTO objDTO, @PathVariable Long customerId,@PathVariable Long orderId){
+//        Pizza obj = new Pizza(objDTO.getTopping,orderId);
+//        orderService.save(obj);
+//        URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
+//                .path("/{id}").buildAndExpand(obj.getId()).toUri();
+//        return ResponseEntity.created(uri).build();
+//    }
 
     @PutMapping("/{id}")
     private Customer update(@RequestBody CustomerDTO objDTO, @PathVariable Long id){

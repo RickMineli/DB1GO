@@ -6,10 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
-import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -17,6 +19,12 @@ public class OrderService {
 
     @Autowired
     private OrderRepository repository;
+
+    @Autowired
+    private CustomerService customerService;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     public Order save(Order obj) {
         return repository.save(obj);
@@ -27,6 +35,18 @@ public class OrderService {
         return obj.orElse(null);
     }
 
+    public List<Order> findCostumerOrders(Long costumerId) {
+        String sql = "SELECT * FROM PIZZA_ORDER P WHERE P.CUSTOMER_ID=" + costumerId;
+        List<Order> orders = new ArrayList<>();
+
+        List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+        for (Map row : rows) {
+            Order order = new Order((String)row.get("ADDRESS"),(boolean)row.get("PICKUP"),customerService.findById((Long)row.get("CUSTOMER_ID")));
+            order.setId((Long)(row.get("ID")));
+            orders.add(order);
+        }
+        return orders;
+    }
     public List<Order> findAll() {
         return repository.findAll();
     }

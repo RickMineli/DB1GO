@@ -4,10 +4,12 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Table(name = "pizzaOrder")
+@Table(name = "pizza_order")
 public class Order {
 
     @Id
@@ -22,8 +24,8 @@ public class Order {
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "customer_id", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
     private Customer customer;
+
 
     protected Order() {
     }
