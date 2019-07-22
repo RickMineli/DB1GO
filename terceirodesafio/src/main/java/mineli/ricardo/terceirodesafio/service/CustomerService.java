@@ -1,5 +1,6 @@
 package mineli.ricardo.terceirodesafio.service;
 
+import mineli.ricardo.terceirodesafio.exceptions.ObjectNotFoundException;
 import mineli.ricardo.terceirodesafio.model.Customer;
 import mineli.ricardo.terceirodesafio.model.Order;
 import mineli.ricardo.terceirodesafio.repository.CustomerRepository;
@@ -27,7 +28,7 @@ public class CustomerService {
 
     public Customer findById(Long id) {
         Optional<Customer> obj = repository.findById(id);
-        return obj.orElse(null);
+        return obj.orElseThrow(() -> new ObjectNotFoundException(id, Customer.class.getSimpleName()));
     }
 
     public List<Customer> findAll() {
