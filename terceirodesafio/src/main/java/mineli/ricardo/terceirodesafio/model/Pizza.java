@@ -1,9 +1,10 @@
 package mineli.ricardo.terceirodesafio.model;
 
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
+import mineli.ricardo.terceirodesafio.model.enums.Topping;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -14,8 +15,9 @@ public class Pizza {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "topping", nullable = false)
-    private String topping;
+    @ElementCollection
+    @CollectionTable(name = "topping")
+    private List<Topping> toppings = new ArrayList<>();
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "pizza_order_id", nullable = false)
@@ -24,8 +26,7 @@ public class Pizza {
     protected Pizza() {
     }
 
-    public Pizza(String topping, Order order) {
-        this.topping = topping;
+    public Pizza(Order order) {
         this.order = order;
     }
 
@@ -37,20 +38,20 @@ public class Pizza {
         this.id = id;
     }
 
-    public String getTopping() {
-        return topping;
-    }
-
-    public void setTopping(String topping) {
-        this.topping = topping;
-    }
-
     public Order getOrder() {
         return order;
     }
 
     public void setOrder(Order order) {
         this.order = order;
+    }
+
+    public List<Topping> getToppings() {
+        return toppings;
+    }
+
+    public void setToppings(List<Topping> toppings) {
+        this.toppings = toppings;
     }
 
     @Override

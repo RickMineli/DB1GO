@@ -2,13 +2,13 @@ package mineli.ricardo.terceirodesafio.dto;
 
 public class PizzaDTO {
 
-    private String topping;
+    private Integer topping;
 
-    public String getTopping() {
+    public Integer getTopping() {
         return topping;
     }
 
-    public void setTopping(String topping) {
+    public void setTopping(Integer topping) {
         this.topping = topping;
     }
 }

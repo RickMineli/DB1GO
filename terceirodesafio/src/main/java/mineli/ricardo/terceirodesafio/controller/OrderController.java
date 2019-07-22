@@ -50,15 +50,6 @@ public class OrderController {
         return ResponseEntity.ok().body(pizzas);
     }
 
-    @PostMapping("/{orderId}/pizzas")
-    private ResponseEntity<Void> insertPizza(@RequestBody PizzaDTO objDTO, @PathVariable Long orderId){
-        Pizza obj = new Pizza(objDTO.getTopping(), service.findById(orderId));
-        pizzaService.save(obj);
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}").buildAndExpand(obj.getId()).toUri();
-        return ResponseEntity.created(uri).build();
-    }
-
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id){
         service.delete(id);

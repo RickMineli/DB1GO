@@ -5,8 +5,10 @@ import mineli.ricardo.terceirodesafio.dto.OrderDTO;
 import mineli.ricardo.terceirodesafio.model.Customer;
 import mineli.ricardo.terceirodesafio.model.Order;
 import mineli.ricardo.terceirodesafio.model.Pizza;
+import mineli.ricardo.terceirodesafio.model.enums.Topping;
 import mineli.ricardo.terceirodesafio.service.CustomerService;
 import mineli.ricardo.terceirodesafio.service.OrderService;
+import mineli.ricardo.terceirodesafio.service.PizzaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.Arrays;
 import java.util.List;
 
 @CrossOrigin("*")
@@ -26,6 +29,9 @@ public class CustomerController {
 
     @Autowired
     private OrderService orderService;
+
+    @Autowired
+    private PizzaService pizzaService;
 
     @RequestMapping("/{id}")
     private ResponseEntity<Customer> findById(@PathVariable Long id){
@@ -55,21 +61,15 @@ public class CustomerController {
 
     @PostMapping("/{customerId}/orders")
     private ResponseEntity<Void> insertOrder(@RequestBody OrderDTO objDTO, @PathVariable Long customerId){
-        Order obj = new Order(objDTO.getAdress(), objDTO.getPickup(), service.findById(customerId));
+        Order obj = new Order(objDTO.getAddress(), objDTO.getPickup(), service.findById(customerId));
         orderService.save(obj);
+        Pizza pizza = new Pizza(orderService.findById(obj.getId()));
+        pizza.setToppings(objDTO.getToppings());
+        pizzaService.save(pizza);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}").buildAndExpand(obj.getId()).toUri();
         return ResponseEntity.created(uri).build();
     }
-
-//    @PostMapping("/{customerId}/orders/{orderId}/pizzas")
-//    private ResponseEntity<Void> insertPizzaInOrder(@RequestBody PizzaDTO objDTO, @PathVariable Long customerId,@PathVariable Long orderId){
-//        Pizza obj = new Pizza(objDTO.getTopping,orderId);
-//        orderService.save(obj);
-//        URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
-//                .path("/{id}").buildAndExpand(obj.getId()).toUri();
-//        return ResponseEntity.created(uri).build();
-//    }
 
     @PutMapping("/{id}")
     private Customer update(@RequestBody CustomerDTO objDTO, @PathVariable Long id){

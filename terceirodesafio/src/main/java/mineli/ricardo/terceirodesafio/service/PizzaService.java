@@ -53,7 +53,7 @@ public class PizzaService {
 
         List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
         for (Map row : rows) {
-            Pizza pizza = new Pizza((String) row.get("TOPPING"), orderService.findById((Long) row.get("PIZZA_ORDER_ID")));
+            Pizza pizza = new Pizza(orderService.findById((Long) row.get("PIZZA_ORDER_ID")));
             pizza.setId((Long) (row.get("ID")));
             pizzas.add(pizza);
         }
