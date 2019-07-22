@@ -72,18 +72,19 @@ public class CustomerController {
     }
 
     @PutMapping("/{id}")
-    private Customer update(@RequestBody CustomerDTO objDTO, @PathVariable Long id){
+    private ResponseEntity<Void> update(@RequestBody CustomerDTO objDTO, @PathVariable Long id){
         Customer obj = service.findById(id);
         obj.setName(objDTO.getName());
         obj.setPhoneNumber(objDTO.getPhoneNumber());
         obj.setEmail(objDTO.getEmail());
-        return service.update(obj);
+        service.update(obj);
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id){
         service.delete(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/page")
