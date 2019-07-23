@@ -2,9 +2,7 @@ package mineli.ricardo.terceirodesafio.controller;
 
 import mineli.ricardo.terceirodesafio.dto.CustomerDTO;
 import mineli.ricardo.terceirodesafio.dto.OrderDTO;
-import mineli.ricardo.terceirodesafio.model.Customer;
-import mineli.ricardo.terceirodesafio.model.Order;
-import mineli.ricardo.terceirodesafio.model.Pizza;
+import mineli.ricardo.terceirodesafio.model.*;
 import mineli.ricardo.terceirodesafio.model.enums.Topping;
 import mineli.ricardo.terceirodesafio.service.CustomerService;
 import mineli.ricardo.terceirodesafio.service.OrderService;
@@ -16,7 +14,13 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 @CrossOrigin("*")
@@ -61,7 +65,23 @@ public class CustomerController {
 
     @PostMapping("/{customerId}/orders")
     private ResponseEntity<Void> insertOrder(@RequestBody OrderDTO objDTO, @PathVariable Long customerId){
+        Date now = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        try {
+            now = sdf.parse(sdf.format(now));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         Order obj = new Order(objDTO.getAddress(), objDTO.getPickup(), service.findById(customerId));
+        if (objDTO.getCredCardNumber() != null){
+            Payment payment = new CreditCard(2d, now,obj,objDTO.getCredCardNumber());
+            obj.setPayment(payment);
+        }else{
+            Payment payment = new Cash(2d, now,obj,2d,4d);
+            obj.setPayment(payment);
+        }
+
+
         orderService.save(obj);
         Pizza pizza = new Pizza(orderService.findById(obj.getId()));
         pizza.setToppings(objDTO.getToppings());

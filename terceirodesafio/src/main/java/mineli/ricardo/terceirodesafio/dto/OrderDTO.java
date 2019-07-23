@@ -9,6 +9,7 @@ public class OrderDTO {
     private String address;
     private Boolean pickup;
     private List<Topping> toppings;
+    private Integer credCardNumber;
 
     public String getAddress() {
         return address;
@@ -32,5 +33,13 @@ public class OrderDTO {
 
     public void setToppings(List<Topping> toppings) {
         this.toppings = toppings;
+    }
+
+    public Integer getCredCardNumber() {
+        return credCardNumber;
+    }
+
+    public void setCredCardNumber(Integer credCardNumber) {
+        this.credCardNumber = credCardNumber;
     }
 }

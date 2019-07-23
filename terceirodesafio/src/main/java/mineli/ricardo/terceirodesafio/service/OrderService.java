@@ -1,5 +1,6 @@
 package mineli.ricardo.terceirodesafio.service;
 
+import mineli.ricardo.terceirodesafio.exceptions.ObjectNotFoundException;
 import mineli.ricardo.terceirodesafio.model.Order;
 import mineli.ricardo.terceirodesafio.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +33,7 @@ public class OrderService {
 
     public Order findById(Long id) {
         Optional<Order> obj = repository.findById(id);
-        return obj.orElse(null);
+        return obj.orElseThrow(() -> new ObjectNotFoundException(id, Order.class.getSimpleName()));
     }
 
     public List<Order> findCostumerOrders(Long costumerId) {

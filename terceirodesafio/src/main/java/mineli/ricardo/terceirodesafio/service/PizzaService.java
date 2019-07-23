@@ -1,5 +1,6 @@
 package mineli.ricardo.terceirodesafio.service;
 
+import mineli.ricardo.terceirodesafio.exceptions.ObjectNotFoundException;
 import mineli.ricardo.terceirodesafio.model.Pizza;
 import mineli.ricardo.terceirodesafio.repository.PizzaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +33,7 @@ public class PizzaService {
 
     public Pizza findById(Long id) {
         Optional<Pizza> obj = repository.findById(id);
-        return obj.orElse(null);
+        return obj.orElseThrow(() -> new ObjectNotFoundException(id, Pizza.class.getSimpleName()));
     }
 
     public List<Pizza> findAll() {
